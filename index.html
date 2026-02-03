@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IELTS Dictation Master (Pro Split)</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+
+    <div class="header">
+        <div class="header-controls" onclick="goHome()"><i class="fas fa-home" style="cursor:pointer; font-size:1.2rem; color:#888;"></i></div>
+        <div class="header-title">IELTS Dictation Master</div>
+        <div class="header-controls" onclick="goList()"><i class="fas fa-book" style="cursor:pointer; font-size:1.2rem; color:#888;"></i></div>
+    </div>
+
+    <div id="home-page" class="page active">
+        <div class="setup-card">
+            <h2 style="color:#444; margin-bottom: 20px;">學習設定</h2>
+            
+            <div class="setting-row">
+                <div class="setting-label"><i class="fas fa-bullseye"></i> 練習題數設定</div>
+                <div class="setting-control">
+                    <input type="number" id="session-limit" value="20" min="5" step="5">
+                </div>
+            </div>
+
+            <div class="setting-row">
+                <div class="setting-label"><i class="fas fa-list-ul"></i> 測驗模式</div>
+                <div class="setting-control">
+                    <select id="quiz-mode">
+                        <option value="standard">標準模式 (新詞 + 所有學習中)</option>
+                        <option value="mixed">綜合模式 (70%新 + 30%舊)</option>
+                        <option value="only_new">新詞模式 (僅未學單字)</option>
+                        <option value="only_learning">特訓模式 (僅學習中單字)</option>
+                        <option value="mastered">複習模式 (僅已掌握)</option>
+                        <option value="hard">易錯模式 (錯 3 次以上)</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="setting-row">
+                <div class="setting-label">
+                    <i class="fas fa-volume-up"></i> 發音聲音<br>
+                    <span style="font-size:0.7rem; font-weight:normal; color:#888;">優先選擇 Daniel 或 Siri</span>
+                </div>
+                <div class="setting-control">
+                    <select id="voice-select" onchange="testVoice()">
+                        <option value="">載入中...</option>
+                    </select>
+                </div>
+            </div>
+
+            <button class="btn btn-primary" onclick="startSession()">
+                <i class="fas fa-play"></i> 開始練習 (隨機亂序)
+            
+            </button>
+            <div style="margin-top: 20px; padding-top: 15px; border-top: 1px dashed #eee;">
+                <button class="btn btn-danger-outline" onclick="resetAllProgress()">
+                    <i class="fas fa-trash-alt"></i> 重置所有學習進度 (歸零)
+                </button>
+            </div>
+        </div>
+
+        <div class="stats-summary">
+            <div class="stat-item">
+                <span id="stat-mastered" class="stat-num" style="color:var(--green)">0/0</span>
+                <span>已掌握</span>
+            </div>
+            <div class="stat-item">
+                <span id="stat-learning" class="stat-num" style="color:#f39c12">0</span>
+                <span>學習中</span>
+            </div>
+            <div class="stat-item">
+                <span id="stat-new" class="stat-num" style="color:var(--gray)">0</span>
+                <span>未學新詞</span>
+            </div>
+        </div>
+    </div>
+
+    <div id="quiz-page" class="page">
+        <div id="quiz-container">
+            <div style="display:flex; justify-content:space-between; color:#888; font-size:0.9rem;">
+                <span>連對目標</span>
+                <span style="font-weight:bold; color:#555;"><span id="streak-counter">0</span> / 5</span>
+            </div>
+            <div class="streak-bar-container"><div id="streak-bar" class="streak-fill"></div></div>
+
+            <div style="margin: 40px 0; cursor:pointer;" onclick="playAudio()">
+                <i class="fas fa-headphones" style="font-size:4rem; color:#e0e0e0; transition:0.2s;"></i>
+                <div style="color:#bbb; font-size:0.8rem; margin-top:10px;">點擊重播</div>
+            </div>
+            
+            <div id="mask-hint" class="placeholder-text">_______</div>
+            <input type="text" id="user-input" autocomplete="off" placeholder="輸入聽到的單字..." autofocus>
+            <div id="msg-hint" class="hint-text"></div>
+            <div id="session-stats" class="session-stats-container">
+                <div class="stat-box">
+                    <span class="stat-label">本次計劃</span>
+                    <span id="sess-total-display" class="stat-value" style="color:#e74c3c;">0 詞</span>
+                </div>
+                <div class="stat-divider"></div>
+                <div class="stat-box">
+                    <span class="stat-label">複習單字</span>
+                    <span id="sess-review-display" class="stat-value" style="background:#edf2f7; color:#555; padding:2px 6px; border-radius:4px;">0/0</span>
+                </div>
+                <div class="stat-divider"></div>
+                <div class="stat-box">
+                    <span class="stat-label">新詞學習</span>
+                    <span id="sess-new-display" class="stat-value" style="background:#e6f7ff; color:#1890ff; padding:2px 6px; border-radius:4px;">0/0</span>
+                </div>
+            </div>
+        </div>
+
+        <div id="result-overlay">
+            <div class="result-banner">
+                <div style="display:flex; justify-content:space-between; padding:0 30px; align-items:center;">
+                    <span id="res-word" class="word-header">word</span>
+                    <span id="auto-timer" style="font-size:0.9rem; border:1px solid rgba(255,255,255,0.4); padding:2px 8px; border-radius:15px;">3s</span>
+                </div>
+                <div class="word-meta">
+                    <span id="res-phonetic"></span><br>
+                    <span id="res-meaning"></span>
+                </div>
+                
+                <button id="btn-master-toggle" class="manual-master-btn" onclick="toggleMastery()">
+                    <i class="far fa-square"></i> 我已掌握 (不再出現)
+                </button>
+            </div>
+            <div class="big-word-display"><span id="res-big-word">WORD</span></div>
+        </div>
+
+        <div id="error-overlay" style="display:none;">
+        <div class="error-banner">
+            <div style="display:flex; justify-content:space-between; padding:0 30px; align-items:center;">
+                <span id="err-word" class="word-header">word</span>
+                <span id="err-timer" style="font-size:0.9rem; border:1px solid rgba(255,255,255,0.4); padding:2px 8px; border-radius:15px;">10s</span>
+            </div>
+            <div class="word-meta">
+                <span id="err-phonetic"></span><br>
+                <span id="err-meaning"></span>
+            </div>
+            <div style="margin-top:10px; font-size:0.8rem; opacity:0.8;">按 Enter 或點擊畫面立即重試</div>
+        </div>
+        
+        <div class="error-body">
+            <div style="margin-bottom: 15px; opacity: 0.8;">
+                <div style="font-size: 1rem; color: #e74c3c; margin-bottom: 5px;">您的答案</div>
+                <div id="err-user-input" style="font-size: 2.5rem; color: #7f8c8d; font-family: monospace;">
+                    user_input
+                </div>
+            </div>
+            <div style="color: #e74c3c; font-size: 1.2rem; margin-bottom: 10px;">正確拼寫</div>
+            <div class="big-word-display" style="background:transparent;">
+                <span id="err-big-word">WORD</span>
+            </div>
+        </div>
+    </div>
+
+        <div class="footer-controls">
+            <div class="control-item" onclick="playAudio()"><i class="fas fa-redo-alt" style="font-size:1.5rem; margin-bottom:5px;"></i>重播 (Tab)</div>
+            <div class="control-item" id="btn-check" onclick="checkAnswer()"><i class="fas fa-check-circle" style="font-size:2.5rem; color:var(--primary-red); margin-bottom:5px;"></i></div>
+            <div class="control-item" id="btn-next" onclick="nextWord(true)" style="display:none;"><i class="fas fa-step-forward" style="font-size:1.5rem; margin-bottom:5px;"></i>下一個</div>
+        </div>
+    </div>
+
+    <div id="list-page" class="page">
+        <div style="width: 100%; max-width:800px;">
+            <h3 style="color:#444; margin-bottom:15px;">單字庫總覽</h3>
+            
+            <div class="filter-bar" style="margin-bottom: 15px; display: flex; gap: 10px;">
+                <button class="filter-btn active" onclick="setFilter('all', this)">全部</button>
+                <button class="filter-btn" onclick="setFilter('mastered', this)" style="border-color:#2ecc71; color:#2ecc71;">已掌握</button>
+                <button class="filter-btn" onclick="setFilter('learning', this)" style="border-color:#f39c12; color:#f39c12;">學習中</button>
+                <button class="filter-btn" onclick="setFilter('new', this)" style="border-color:#95a5a6; color:#95a5a6;">未學</button>
+            </div>
+
+            <table class="list-table">
+                <thead>
+                    <tr>
+                        <th width="10%" style="text-align:center;">掌握</th>
+                        <th width="40%">單字</th>
+                        <th width="15%">狀態</th>
+                        <th width="15%">連對</th>
+                        <th width="20%">錯次</th>
+                    </tr>
+                </thead>
+                <tbody id="list-body"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <script src="words.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,246 @@
+:root { --primary-red: #d9534f; --bg-color: #f9f9f9; --text-color: #333; --green: #2ecc71; --gray: #95a5a6; }
+body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background-color: var(--bg-color); margin: 0; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
+
+.btn { padding: 12px 24px; border-radius: 8px; border: none; cursor: pointer; font-size: 1rem; transition: 0.2s; }
+.btn-primary { background: var(--primary-red); color: white; width: 100%; font-size: 1.1rem; padding: 15px; margin-top: 15px; }
+.btn:hover { opacity: 0.9; transform: translateY(-1px); }
+
+/* 頂部 */
+.header { padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; background: #fff; box-shadow: 0 2px 5px rgba(0,0,0,0.05); z-index: 10; }
+.header-title { font-weight: bold; font-size: 1.2rem; color: #555; }
+
+.page { display: none; width: 100%; height: 100%; flex-direction: column; align-items: center; overflow-y: auto; }
+.page.active { display: flex; }
+
+/* 首頁設定卡片 */
+#home-page { justify-content: center; }
+.setup-card { background: white; padding: 30px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.08); text-align: center; width: 90%; max-width: 450px; }
+
+.setting-row { display: flex; justify-content: space-between; align-items: center; margin: 15px 0; border-bottom: 1px solid #f0f0f0; padding-bottom: 15px; }
+.setting-label { font-weight: bold; color: #555; text-align: left; }
+.setting-control { width: 60%; text-align: right; }
+
+select, input[type="number"] { padding: 8px; border: 2px solid #eee; border-radius: 8px; font-size: 1rem; background: #fff; }
+select { width: 100%; }
+input[type="number"] { width: 80px; text-align: center; }
+
+/* 統計數據條 */
+.stats-summary { margin-top: 30px; background: white; padding: 15px; border-radius: 12px; font-size: 0.9rem; color: #666; display: flex; gap: 15px; justify-content: center; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+.stat-item { display: flex; flex-direction: column; align-items: center; }
+.stat-num { font-weight: bold; font-size: 1.1rem; margin-bottom: 3px; }
+
+/* 聽寫頁 */
+#quiz-container { width: 100%; max-width: 600px; text-align: center; margin-top: 30px; flex: 1; padding: 0 20px; position: relative; }
+.streak-bar-container { width: 100%; height: 6px; background: #eee; border-radius: 3px; margin: 10px auto; overflow: hidden; }
+.streak-fill { height: 100%; background: var(--green); width: 0%; transition: width 0.3s; }
+
+.placeholder-text { font-size: 2.5rem; color: #e0e0e0; font-weight: bold; margin: 30px 0; letter-spacing: 8px; font-family: monospace; }
+input[type="text"] { font-size: 2.5rem; border: none; border-bottom: 3px solid #eee; text-align: center; outline: none; width: 100%; background: transparent; color: #333; padding-bottom: 10px; }
+input[type="text"]:focus { border-color: var(--primary-red); }
+.hint-text { height: 25px; margin-top: 15px; color: var(--primary-red); font-weight: 500; }
+
+/* 結果遮罩 */
+#result-overlay { display: none; width: 100%; flex-direction: column; align-items: center; background: var(--bg-color); position: absolute; top: 0; bottom: 80px; z-index: 5; }
+/* 修改後：改成綠色 */
+.result-banner {
+    background-color: var(--green); /* ✅ 改成綠色 */
+    width: 100%;
+    padding: 25px 0;
+    color: white;
+    text-align: center;
+    box-shadow: 0 4px 15px rgba(46, 204, 113, 0.3); /* 陰影也稍微帶點綠色 */
+    animation: slideDown 0.3s ease-out;
+}
+.word-header { font-size: 2.8rem; font-weight: bold; }
+.word-meta { font-size: 1.1rem; opacity: 0.95; margin-top: 10px; padding: 0 20px; line-height: 1.4; }
+
+/* 手動掌握按鈕 */
+.manual-master-btn { margin-top: 15px; padding: 8px 20px; border: 2px solid rgba(255,255,255,0.6); border-radius: 30px; background: rgba(255,255,255,0.1); color: white; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; transition: 0.2s; }
+.manual-master-btn:hover { background: rgba(255,255,255,0.3); }
+.manual-master-btn.active { background: #2ecc71; border-color: #2ecc71; }
+
+/* 底部控制 */
+.footer-controls { height: 80px; display: flex; justify-content: center; align-items: center; gap: 50px; background: white; border-top: 1px solid #eee; width: 100%; position: fixed; bottom: 0; }
+.control-item { display: flex; flex-direction: column; align-items: center; cursor: pointer; color: #95a5a6; font-size: 0.85rem; }
+.control-item:hover { color: var(--primary-red); }
+
+/* 單字表 */
+#list-page { padding: 20px; background: #f4f6f8; }
+.list-table { width: 100%; border-collapse: collapse; background: white; box-shadow: 0 2px 10px rgba(0,0,0,0.05); border-radius: 8px; overflow: hidden; }
+.list-table th { background: #fff; padding: 12px; text-align: left; border-bottom: 2px solid #eee; color: #888; font-size: 0.9rem; }
+.list-table td { padding: 12px; border-bottom: 1px solid #f0f0f0; font-size: 0.95rem; }
+.tag { padding: 3px 8px; border-radius: 4px; font-size: 0.75rem; color: white; display: inline-block; }
+
+/* 篩選按鈕樣式 */
+.filter-btn { padding: 6px 15px; border: 1px solid #ddd; background: white; border-radius: 20px; cursor: pointer; font-size: 0.9rem; transition: all 0.2s; color: #666; }
+.filter-btn:hover { background: #f0f0f0; }
+.filter-btn.active { background: #555; color: white; border-color: #555; }
+button[onclick*="mastered"].active { background: #2ecc71 !important; color: white !important; }
+button[onclick*="learning"].active { background: #f39c12 !important; color: white !important; }
+button[onclick*="new"].active { background: #95a5a6 !important; color: white !important; }
+
+/* 新增：危險操作按鈕 (重置進度用) */
+.btn-danger-outline {
+    background: transparent;
+    border: 1px solid #ff7675; /* 淺紅色邊框 */
+    color: #ff7675;
+    width: 100%;
+    font-size: 0.9rem;
+    padding: 10px;
+    margin-top: 5px;
+}
+
+.btn-danger-outline:hover {
+    background: #ff7675;
+    color: white;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 5px rgba(214, 48, 49, 0.2);
+}
+
+/* 新增：錯誤遮罩樣式 */
+#error-overlay {
+    position: absolute;
+    top: 0;
+    bottom: 80px; /* 留出底部控制列 */
+    width: 100%;
+    background: #fff;
+    z-index: 6; /* 比結果遮罩更高 */
+    flex-direction: column;
+}
+
+.error-banner {
+    background-color: #e74c3c; /* 紅色背景 */
+    width: 100%;
+    padding: 25px 0;
+    color: white;
+    text-align: center;
+    box-shadow: 0 4px 15px rgba(231, 76, 60, 0.3);
+}
+
+/* 修改：錯誤畫面的主體容器 */
+.error-body {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center; /* 讓所有內容在垂直方向「居中」 */
+    align-items: center;     /* 讓所有內容在水平方向「居中」 */
+    background-color: #fdf2f2;
+    gap: 10px;               /* 設定每個區塊之間的間距，不要太遠 */
+}
+
+/* 新增：加大錯誤訂正時的「正確單字」字體 */
+#err-big-word {
+    font-size: 5rem;       /* 字體大小：可以改成 4rem 或 6rem */
+    font-weight: 800;      /* 字體粗細：讓它更顯眼 */
+    line-height: 1.2;      /* 行高：避免字太高被切掉 */
+    display: inline-block; /* 保持區塊完整性 */
+    margin-top: 10px;      /* 與上方「正確拼寫」文字的間距 */
+}
+
+/* 為了確保在手機版不會大到爆版，可以加一個RWD設定 (選用) */
+@media (max-width: 480px) {
+    #err-big-word {
+        font-size: 3.5rem; /* 手機上稍微小一點 */
+    }
+}
+
+/* 修改：正確答案的大字容器 */
+.big-word-display {
+    /* flex: 1;  <-- ⚠️ 務必刪除或註解掉這一行，不然它會撐開空間 */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    background: transparent; /* 錯誤模式下背景透明 */
+}
+
+/* 新增：答對時的大字文字設定 (仿照錯誤時的大字風格) */
+#res-big-word {
+    font-size: 5rem;         /* 超大字體 */
+    font-weight: 800;        /* 粗體 */
+    color: var(--green);     /* 使用綠色文字，與上方 banner 呼應 */
+    letter-spacing: 2px;     /* 字距 */
+    text-transform: lowercase; /* 確保顯示為小寫，或去掉這一行保持原樣 */
+}
+
+/* RWD 手機版適配 (確保手機上不會爆掉) */
+@media (max-width: 480px) {
+    #res-big-word {
+        font-size: 3.5rem;
+    }
+}
+
+/* --- 修復遮擋問題 --- */
+
+/* 1. 確保遮罩層級最高，蓋過頂部導航列 */
+#result-overlay, #error-overlay {
+    z-index: 100 !important; /* 原本是 5 和 6，改為 100 強制置頂 */
+    top: 0;
+    height: 100%; /* 確保蓋滿整個螢幕高度 */
+    position: fixed; /* 改為 fixed 確保捲動時也不會跑掉 */
+}
+
+/* 2. 增加 Banner 內部的頂部間距，讓字不要貼到螢幕最上面 */
+.result-banner, .error-banner {
+    padding-top: 50px; /* 增加頂部留白，讓內容往下移一點 */
+    padding-bottom: 30px; /* 底部也加一點平衡一下 */
+}
+
+/* 3. 微調右上角倒數計時器的位置，確保它在視覺上比較舒適 */
+#auto-timer, #err-timer {
+    margin-top: 5px; /* 微調位置 */
+}
+
+/* 使用者錯誤輸入的樣式 (修改版) */
+#err-user-input {
+    font-weight: bold;
+    color: #95a5a6 !important; /* 保持灰色 */
+    text-decoration: none !important;
+    border-bottom: 2px solid #e74c3c; /* 保留底部紅線強調 */
+    display: inline-block;
+    padding: 0 10px;
+}
+
+.user-input-container {
+    margin-bottom: 15px; /* 縮短與下方「正確拼寫」的距離 */
+    opacity: 0.8;
+}
+
+/* 新增：底部進度儀表板樣式 */
+.session-stats-container {
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 1px solid #eee;
+    display: flex;
+    justify-content: space-around; /* 平均分配空間 */
+    align-items: center;
+    width: 100%;
+}
+
+.stat-box {
+    display: flex;
+    flex-direction: column; /* 上下排列 */
+    align-items: center;
+    gap: 5px;
+}
+
+.stat-label {
+    font-size: 0.8rem;
+    color: #999;
+}
+
+.stat-value {
+    font-size: 1rem;
+    font-weight: bold;
+    font-family: monospace; /* 讓數字寬度一致 */
+}
+
+.stat-divider {
+    width: 1px;
+    height: 20px;
+    background-color: #ddd;
+}
+
+@keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-6px); } 75% { transform: translateX(6px); } }
+.shake { animation: shake 0.4s; }
+@keyframes slideDown { from { transform: translateY(-100%); } to { transform: translateY(0); } }
