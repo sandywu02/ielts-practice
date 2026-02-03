@@ -241,6 +241,21 @@ button[onclick*="new"].active { background: #95a5a6 !important; color: white !im
     background-color: #ddd;
 }
 
+ /* 新增：次要操作按鈕 (匯入/匯出用) */
+.btn-secondary {
+    background-color: #f1f2f6;
+    color: #57606f;
+    border: 1px solid #dfe4ea;
+    padding: 10px;
+    font-size: 0.9rem;
+}
+
+.btn-secondary:hover {
+    background-color: #dfe4ea;
+    color: #2f3542;
+    border-color: #ced6e0;
+}
+
 @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-6px); } 75% { transform: translateX(6px); } }
 .shake { animation: shake 0.4s; }
 @keyframes slideDown { from { transform: translateY(-100%); } to { transform: translateY(0); } }

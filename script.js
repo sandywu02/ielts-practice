@@ -78,6 +78,85 @@ function resetAllProgress() {
     }
 }
 
+// ==========================================
+// 新增功能：匯入與匯出 (資料同步)
+// ==========================================
+
+// 1. 匯出進度 (下載 JSON 檔)
+function exportProgress() {
+    // 從 LocalStorage 抓取目前的資料庫
+    const dataStr = localStorage.getItem('ielts_master_v3_db');
+    
+    if (!dataStr) {
+        alert("目前沒有學習進度可供匯出！");
+        return;
+    }
+
+    // 建立檔案 Blob 物件
+    const blob = new Blob([dataStr], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    
+    // 產生下載連結並自動點擊
+    const a = document.createElement('a');
+    a.href = url;
+    
+    // 檔名加上日期，方便辨識版本 (例如: ielts_backup_2025-02-04.json)
+    const date = new Date().toISOString().slice(0, 10);
+    a.download = `ielts_backup_${date}.json`;
+    
+    document.body.appendChild(a);
+    a.click();
+    
+    // 清理
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+}
+
+// 2. 匯入進度 (讀取 JSON 檔並覆蓋)
+function importProgress(input) {
+    const file = input.files[0];
+    if (!file) return;
+
+    // 建立檔案讀取器
+    const reader = new FileReader();
+    
+    reader.onload = function(e) {
+        try {
+            const jsonContent = e.target.result;
+            const parsedData = JSON.parse(jsonContent);
+
+            // 簡單驗證檔案格式是否正確 (檢查是否為陣列)
+            if (!Array.isArray(parsedData)) {
+                throw new Error("檔案格式不正確 (不是陣列)");
+            }
+
+            // 二次確認，防止誤操作
+            if (confirm(`⚠️ 確定要匯入此檔案嗎？\n\n這將會「覆蓋」目前的學習進度！\n(建議先匯出目前的進度作為備份)`)) {
+                
+                // 1. 更新記憶體中的資料庫
+                db = parsedData;
+                
+                // 2. 寫入 LocalStorage
+                saveData();
+                
+                // 3. 重新整理頁面以套用新數據
+                alert("✅ 匯入成功！頁面將重新整理。");
+                location.reload();
+            }
+
+        } catch (err) {
+            alert("❌ 匯入失敗：檔案格式錯誤或損毀。\n請確保您匯入的是正確的 .json 備份檔。");
+            console.error(err);
+        }
+    };
+
+    // 開始讀取文字內容
+    reader.readAsText(file);
+    
+    // 清空 input，確保下次選同一個檔案也能觸發 onchange
+    input.value = '';
+}
+
 function saveData() {
     localStorage.setItem('ielts_master_v3_db', JSON.stringify(db));
 }
